@@ -1,0 +1,66 @@
+.myDataTable {
+    width: 80%;
+    border: 2px solid black;
+    padding: 15px;
+    thead {
+        tr {
+            td {
+                border: 1px solid black;
+                text-align: center;
+                padding: 10px;
+                font-size: 20px;
+                font-weight: 600;
+            }
+        }
+    }
+
+    tbody {
+        tr {
+            td {
+                border: 1px solid black;
+                padding: 5px;
+                margin-bottom: 3px;
+                font-size: 15px;
+            }
+            
+            .designation {
+                font-weight: 900;
+            }
+        }
+    }
+}
+
+.fotoMyData {
+    width: 20%;
+}
+
+@media all and (max-width: 1200px) {
+    .fotoMyData {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        img {
+            width: 30%;
+        }
+    }
+}
+
+@media all and (max-width: 800px) {
+    .fotoMyData {
+        margin-bottom: 20px;
+        img {
+            width: 50%;
+        }
+    }
+}
+
+@media all and (max-width: 400px) {
+    .fotoMyData {
+        margin-bottom: 20px;
+        img {
+            width: 80%;
+        }
+    }
+} 

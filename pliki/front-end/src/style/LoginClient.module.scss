@@ -1,0 +1,26 @@
+.form {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    input {
+        padding: 10px;
+        margin-bottom: 10px;
+        width: 30%;
+    }
+}
+
+p {
+    font-size: 20px;
+    .link {
+        text-decoration: none;
+        color: green;
+        font-size: 20px;
+        transition: 0.8s;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

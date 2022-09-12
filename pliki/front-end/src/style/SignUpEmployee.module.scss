@@ -1,0 +1,41 @@
+%commonPart {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+}
+
+.close {
+    display: none;
+}
+
+.open {
+    display: contents;
+}
+
+img {
+    width: 150px;
+    height: 200px;
+    border-radius: 45%;
+}
+
+.formConntent {
+    @extend %commonPart;
+    
+    label {
+        @extend %commonPart;
+        span {
+            margin-bottom: 10px;
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    }
+}

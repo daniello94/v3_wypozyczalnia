@@ -1,0 +1,67 @@
+%commonPart {
+    padding: 10px;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+%commonPartThead {
+    border: 2px solid black;
+    font-weight: bold;
+    @extend %commonPart;
+    background-color:darkkhaki;
+    opacity: 0.9;
+}
+
+.machineContent {
+    width: 100%;
+    text-align: center;
+
+    img {
+        border-radius: 0;
+        width: 400px;
+        height: 300px;
+        margin-bottom: 20px;
+    }
+
+    .vivesForm {
+        border: 1px solid black;
+        width: 80%;
+        margin-bottom: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: azure;
+        opacity: 0.8;
+
+        tbody {
+            td {
+                border: 1px solid black;
+                @extend %commonPart;
+            }
+
+            .theadContent {
+                @extend %commonPartThead;
+            }
+        }
+
+        thead {
+            td {
+                @extend %commonPartThead;
+            }
+        }
+    }
+}
+
+form{
+    text-align: center;
+    label{
+        margin-bottom: 10px;
+        span{
+            margin: 10px;
+            font-size: 20px;
+        }
+        div{
+            width: 100%;
+        }
+        
+    }
+}

@@ -1,0 +1,22 @@
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px 10px;
+    width: 80%;
+    background-color: antiquewhite;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.secoundContainer {
+    flex-direction: row;
+}
+
+@media all and (max-width: 1200px) {
+    .secoundContainer {
+        flex-direction: column;
+    }
+} 
