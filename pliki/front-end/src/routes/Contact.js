@@ -10,6 +10,7 @@ export default function Contact(props) {
     const [userEmail, setUserEmial] = useState(props.dataUser?.user.email);
     const [userLastName, setUserLastName] = useState(props.dataUser?.user.lastName);
     const [textarea, setTextarea] = useState("");
+    const [subject, setSubject] = useState("")
     const [error, setError] = useState('');
 
     const sendEmail = (e) => {
@@ -23,16 +24,20 @@ export default function Contact(props) {
         } else if (!userEmail) {
             setError(<Error>Podaj Email</Error>)
             return
+        }else if (!subject) {
+            setError(<Error>Podaj Temat Wiadomości</Error>)
+            return
         } else if (!textarea) {
             setError(<Error>Wpisz treść wiadomości</Error>)
             return
         } else {
             e.preventDefault();
-            axios.post('http://127.0.0.1:8080/client/send-email',{
+            axios.post('http://127.0.0.1:8080/client/send-email', {
                 userName,
                 userEmail,
                 userLastName,
-                textarea
+                textarea,
+                subject
             })
                 .then(() => {
                     setError(<Error isAlternative={true}>Wiadomośc została wysłana</Error>)
@@ -66,6 +71,14 @@ export default function Contact(props) {
                     value={userEmail}
                     onChange={(e) => setUserEmial(e.target.value)}
                     placeholder="Wpisz swó email" />
+
+                <input
+                    type="text"
+                    name="subject"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    placeholder="Wpisz temat" />
+
                 <textarea
                     name="message"
                     value={textarea}

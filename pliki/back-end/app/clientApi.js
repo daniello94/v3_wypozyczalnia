@@ -74,6 +74,7 @@ router.post('/clientAll', function (req, res) {
     })
 });
 
+
 router.post('/send-email', function (req, res) {
     let transporter = nodeMailer.createTransport({
         host: 'smtp.gmail.com',
@@ -87,21 +88,117 @@ router.post('/send-email', function (req, res) {
             rejectUnauthorized: false
         }
     });
+
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "1";
+
+    let contentHtml =
+
+        `<html>
+            <head>
+                <style>
+                    table{
+                        border:1px solid black;
+                    }
+                    table thead{
+                        text-align: center;
+                        font-size: 20px;
+                        font-weight: bold;
+                        }
+
+                    table thead tr td{
+                        border:1px solid black;    
+                    }
+
+                    table tbody tr td{
+                        border:1px solid black;  
+                        font-size: 15px;
+                        font-weight: bold;  
+                    }
+
+                    .headTbody{
+                        color:red;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1> Otrzymałeś wiadomość od ${req.body.userName}</h1> 
+                <br/>
+                <br/>
+                <table>
+                    <thead>
+                        <tr>
+                            <td colSpan="2">
+                                Dane Nadawcy
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                Imię
+                            </td>
+                            <td>
+                                ${req.body.userName}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Nazwisko
+                            </td>
+                            <td>
+                                ${req.body.userLastName}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Email
+                            </td>
+                            <td>
+                                ${req.body.userEmail}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td className="headTbody">
+                                Treść wiadomości
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                ${req.body.textarea}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p> Załączniku zanjdują sie dalsze infoormacje</p>
+            </body>
+        </html>
+        `
+
+    let contentAttachments =
+        `Witaj!
+Urzytkownik ${req.body.userName} ${req.body.userLastName}, którego adres email to ${req.body.userEmail} napisał:
+${req.body.textarea}`
+
     let mailOptions = {
-        from: process.env.ADDRESS_EMAIL,
-        userName: req.body.userName,
-        userLastName: req.body.userLastName,
-        userEmail:req.body.userEmail,
-        message: req.body.message,
+        to: process.env.ADDRESS_EMAIL,
+        from: "<wiad@op.pl>",
+        subject: req.body.subject,
+        html: contentHtml,
+        attachments: [
+            {
+                filename: 'fileName.txt',
+                content: contentAttachments
+            }]
     };
 
+    console.log(req.body);
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             return console.log(error);
         }
         console.log('Message %s sent: %s', info.messageId, info.response);
-        res.render('index');
+        res.json("wysłano");
     });
 });
 
