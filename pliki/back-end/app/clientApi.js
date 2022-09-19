@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const client = require('../app/controlelers/client.controleler');
+var pdf = require("pdf-creator-node");
+var fs = require("fs");
 path = require('path'),
     nodeMailer = require('nodemailer'),
     bodyParser = require('body-parser');
+
 
 
 router.post('/signup', function (req, res) {
@@ -76,20 +79,6 @@ router.post('/clientAll', function (req, res) {
 
 
 router.post('/send-email', function (req, res) {
-    let transporter = nodeMailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.ADDRESS_EMAIL,
-            pass: process.env.EMAIL_PASSWORD
-        },
-        tls: {
-            rejectUnauthorized: false
-        }
-    });
-
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "1";
 
     let contentHtml =
 
@@ -98,11 +87,13 @@ router.post('/send-email', function (req, res) {
                 <style>
                     table{
                         border:1px solid black;
+                        width: 100%;
                     }
                     table thead{
                         text-align: center;
                         font-size: 20px;
                         font-weight: bold;
+                        padding: 5px;
                         }
 
                     table thead tr td{
@@ -112,12 +103,10 @@ router.post('/send-email', function (req, res) {
                     table tbody tr td{
                         border:1px solid black;  
                         font-size: 15px;
-                        font-weight: bold;  
+                        font-weight: bold; 
+                        padding: 5px; 
                     }
-
-                    .headTbody{
-                        color:red;
-                    }
+                    
                 </style>
             </head>
             <body>
@@ -158,12 +147,12 @@ router.post('/send-email', function (req, res) {
                             </td>
                         </tr>
                         <tr>
-                            <td className="headTbody">
+                            <td style="text-align: center" colSpan="2">
                                 Treść wiadomości
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td colSpan="2">
                                 ${req.body.textarea}
                             </td>
                         </tr>
@@ -173,12 +162,57 @@ router.post('/send-email', function (req, res) {
                 <p> Załączniku zanjdują sie dalsze infoormacje</p>
             </body>
         </html>
-        `
+    `
+ 
+var options = {
+    format: "A3",
+    orientation: "portrait",
+    border: "10mm",
+    header: {
+        height: "45mm",
+        contents: '<div style="text-align: center;">Projekt wypożuczlnia</div>'
+    },
+    footer: {
+        height: "25mm",
+        contents: {
+            first: 'Cover page',
+            2: 'Second page', 
+            last: 'Last Page'
+        }
+    }
+};
 
-    let contentAttachments =
-        `Witaj!
-Urzytkownik ${req.body.userName} ${req.body.userLastName}, którego adres email to ${req.body.userEmail} napisał:
-${req.body.textarea}`
+var document = {
+    html: contentHtml,
+    data: {
+        users: contentHtml,
+    },
+    path: "messageEmail/output.pdf",
+    type: "",
+};
+
+    pdf
+        .create(document, options)
+        .then((res) => {
+            console.log(res);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "1";
+
+    let transporter = nodeMailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+            user: process.env.ADDRESS_EMAIL,
+            pass: process.env.EMAIL_PASSWORD
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
 
     let mailOptions = {
         to: process.env.ADDRESS_EMAIL,
@@ -187,8 +221,9 @@ ${req.body.textarea}`
         html: contentHtml,
         attachments: [
             {
-                filename: 'fileName.txt',
-                content: contentAttachments
+                filename: 'fileName.pdf',
+                path:"messageEmail/output.pdf",
+                contentType: 'application/pdf'
             }]
     };
 
