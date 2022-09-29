@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const apiClient = require('./app/clientApi');
 const apiEmployee = require('./app/employeeApi');
 const equipments = require('./app/equipmentApi');
+const invoices = require('./app/invoiceApi');
 
 const config = {
     origin: 'http://' + process.env.DB_HOST
@@ -15,7 +16,7 @@ const config = {
 
 app.use(express.json());
 app.use(cors());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use("/fotoProfile", express.static("images"));
@@ -25,7 +26,8 @@ app.set('view engine', 'ejs');
 
 app.use('/client', apiClient);
 app.use('/employe', apiEmployee);
-app.use('/machines',equipments);
+app.use('/machines', equipments);
+app.use('/invoice',invoices);
 
 app.get("/", cors(config), function (req, res) {
     res.status(219).json("Wypożyczalnia sprzetu")

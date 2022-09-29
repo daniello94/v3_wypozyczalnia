@@ -7,6 +7,13 @@ import style from "../style/VivesOrder.module.scss"
 import Button from "../components/Button";
 
 export default function VivesOrder() {
+    const [nameMachine, setNameMachine] = useState('');
+    const [modelMachine, setModelMachine] = useState('');
+    const [typePerson, setTypePerson] = useState("");
+    const [lengthLease, setLengthLease] = useState('');
+    const [unitPriceService, setUnitPriceService] = useState('');
+    const [sumPriceService, setSumPriceService] = useState('');
+    const [vat, setVat] = useState(valueVat2())
     const [status, setStatus] = useState([]);
     const [responseQuestion, setResponseQuestion] = useState('');
     const [aplicationId, setAplicationId] = useState("");
@@ -14,6 +21,32 @@ export default function VivesOrder() {
         quanitity: "",
         aplication: []
     });
+    console.log(lengthLease);
+
+    function valueVat() {
+        if (typePerson === "Firma") {
+            return "0.08"
+        } else if (typePerson === "Osoba prywatna") {
+            return "0.23"
+        }
+    }
+
+    function valueVat2() {
+        if (valueVat() === "0.08") {
+            return "8%"
+        } else if (valueVat() === "0.23") {
+            return "23%"
+        }
+    }
+
+    function sumPriseAll() {
+        let num1 = unitPriceService.toString()
+        let num2 = lengthLease.toString()
+        let sum = num1 * num2
+        let newSum = sum * valueVat()
+        let sumPriseAll = (sum += newSum).toString()
+        return sumPriseAll.toString()
+    }
 
     function viveResponseQuestion(_id) {
         setResponseQuestion(_id)
@@ -33,13 +66,16 @@ export default function VivesOrder() {
             })
     };
 
-    function updateResponse(_id) {
+    function updateResponse(_id, dataInvoice, timeDifferenceInDays) {
+        setLengthLease(timeDifferenceInDays)
+        setVat(valueVat2())
+        setSumPriceService(sumPriseAll())
         if (oneMachinesStatus.quanitity < 1) {
             return alert("Brak dostępnych maszyn")
-
         } else if (oneMachinesStatus.quanitity > 0) {
 
             const quanitity = (oneMachinesStatus.quanitity - 1).toString()
+
 
             axios.put('http://127.0.0.1:8080/machines/update/' + _id, {
                 quanitity
@@ -58,6 +94,17 @@ export default function VivesOrder() {
                     oneMachines(_id)
 
                 })
+          
+            axios.post('http://127.0.0.1:8080/invoice/new', {
+                dataClient: { ...dataInvoice },
+                lengthLease,
+                sumPriceService,
+                unitPriceService,
+                nameMachine,
+                modelMachine,
+                vat
+            })
+            console.log('wysłano fakture');
             return
         }
 
@@ -84,7 +131,6 @@ export default function VivesOrder() {
                 oneMachines(_id)
 
             })
-
     };
 
     function updateResponseReject(_id) {
@@ -105,8 +151,9 @@ export default function VivesOrder() {
     };
 
     useEffect(() => {
-        listMachines()
+        listMachines();
     }, []);
+
 
     if (responseQuestion === status._id) {
         return (
@@ -185,6 +232,34 @@ export default function VivesOrder() {
 
                             {oneMachinesStatus.aplication.map((order) => {
                                 if (order._id === aplicationId) {
+
+                                    let date1 = moment(order.startDate).format('YYYY ,MM ,DD')
+                                    let date2 = moment(order.endDate).format('YYYY,MM,DD')
+
+                                    date1 = date1.split(',');
+                                    date2 = date2.split(',');
+
+                                    date1 = new Date(date1[0], date1[1], date1[2]);
+                                    date2 = new Date(date2[0], date2[1], date2[2]);
+
+                                    const date1_unixtime = parseInt(date1.getTime() / 1000);
+                                    const date2_unixtime = parseInt(date2.getTime() / 1000);
+
+                                    var timeDifference = date2_unixtime - date1_unixtime;
+
+                                    var timeDifferenceInHours = timeDifference / 60 / 60;
+
+                                    var timeDifferenceInDays = timeDifferenceInHours / 24;
+
+                                    const dataInvoice = {
+                                        firstName: order.firstName,
+                                        lastName: order.lastName,
+                                        numberId: order.numberId,
+                                        numberPhone: order.phoneNumber,
+                                        typePerson: order.typePerson,
+
+                                    }
+
                                     return (
                                         <tr key={order._id}>
                                             <td>
@@ -213,10 +288,19 @@ export default function VivesOrder() {
                                                 className={style.updateResponse}>
                                                 {order.oderStan !== 'Aktywny' && order.oderStan !== 'Zakończony' && (
                                                     <Button
-                                                        onClick={() => updateResponse(oneMachinesStatus._id)}>
+                                                        onClick={() => updateResponse(oneMachinesStatus._id, dataInvoice)}>
                                                         Akceptuj
                                                     </Button>
                                                 )}
+
+                                                <Button
+                                                    onClick={() => {
+                                                        updateResponse(oneMachinesStatus._id, dataInvoice, timeDifferenceInDays)
+
+                                                    }}>
+                                                    Przycisk testowy linia 281
+                                                </Button>
+
                                                 {order.oderStan !== 'Zakończony' && order.oderStan !== 'Odzrucony' && order.oderStan !== 'Oczekujący' && (
                                                     <Button
                                                         onClick={() => updateResponseFinish(oneMachinesStatus._id)}>
@@ -241,6 +325,7 @@ export default function VivesOrder() {
 
                         </tbody>
                     </table>
+
                     <Button
                         onClick={() => setResponseQuestion('')}>
                         Wróć
@@ -253,6 +338,7 @@ export default function VivesOrder() {
     return (
         <Container>
             {status.map(machine => {
+                console.log(machine);
                 return (
                     <div className={style.contentVivesOrder} key={machine._id}>
                         <h3>
@@ -354,6 +440,10 @@ export default function VivesOrder() {
                                                     idObjectArray(order._id)
                                                     viveResponseQuestion(status._id)
                                                     oneMachines(machine._id)
+                                                    setTypePerson(order.typePerson)
+                                                    setUnitPriceService(machine.unitPriceService)
+                                                    setModelMachine(machine.model)
+                                                    setNameMachine(machine.machineName)
                                                 }}>Odpowiedz</Button>
                                             </td>
                                         </tr>

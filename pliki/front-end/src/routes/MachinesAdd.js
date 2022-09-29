@@ -30,6 +30,10 @@ const validate = (form) => {
         return "Dodaj model"
     };
 
+    if(!form.unitPriceService){
+        return "Podaj cene"
+    }
+
     if (!form.category) {
         return "Dodaj katrgorie"
     };
@@ -51,7 +55,8 @@ export default function MachinesAdd() {
         year: "",
         model: "",
         category: "",
-        descripsion: ""
+        descripsion: "",
+        unitPriceService: ""
     });
 
     const addMachine = (e) => {
@@ -70,7 +75,8 @@ export default function MachinesAdd() {
                 model,
                 mileage,
                 category,
-                descripsion
+                descripsion,
+                unitPriceService
 
             } = form
 
@@ -83,6 +89,7 @@ export default function MachinesAdd() {
             formData.append("mileage", mileage);
             formData.append("category", category);
             formData.append("descripsion", descripsion);
+            formData.append("unitPriceService", unitPriceService)
 
             axios.post('http://localhost:8080/machines/addEquipment', formData)
                 .then(() => {
@@ -99,7 +106,8 @@ export default function MachinesAdd() {
                 year: "",
                 model: "",
                 category: "",
-                descripsion: ""
+                descripsion: "",
+                unitPriceService: ""
 
             })
         }
@@ -150,7 +158,8 @@ export default function MachinesAdd() {
         year,
         model,
         category,
-        descripsion
+        descripsion,
+        unitPriceService
     } = form
 
     return (
@@ -159,7 +168,7 @@ export default function MachinesAdd() {
             <Error>
                 {error}
             </Error>
-            
+
             <Container isAlternative={true}>
                 <div
                     className={style[isActive]}>
@@ -209,6 +218,14 @@ export default function MachinesAdd() {
                         type="text"
                         name="model"
                         placeholder="Podaj model"
+                    />
+
+                    <input
+                        onChange={stateMchine}
+                        value={unitPriceService}
+                        type="number"
+                        name="unitPriceService"
+                        placeholder="Cena za 24h urzytkowania w zł"
                     />
 
                     <label>

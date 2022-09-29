@@ -11,11 +11,12 @@ import Error from "../components/Error";
 
 export default function VivesMachines(props) {
     const [status, setStatus] = useState([]);
-
+console.log(status);
     const [oneMachine, setOneMachine] = useState({
         machineName: "",
         model: "",
         year: "",
+        unitPriceService:"",
         aplication: []
     })
 
@@ -31,6 +32,10 @@ export default function VivesMachines(props) {
     const [lastName, setLastName] = useState(props.dataUser?.user.lastName);
     const [phoneNumber, setPhoneNumber] = useState(props.dataUser?.user.phoneNumber);
     const [numberId, setNumberId] = useState("");
+    const [typePerson, setTypePerson] = useState("");
+    const [nameCompany, setNameCompany] = useState("");
+
+
 
     function listMachines() {
         axios.get('http://localhost:8080/machines/all')
@@ -89,7 +94,9 @@ export default function VivesMachines(props) {
                 phoneNumber,
                 numberId,
                 startDate,
-                endDate
+                endDate,
+                nameCompany,
+                typePerson
             })
                 .then(() => {
                     setError(
@@ -153,7 +160,29 @@ export default function VivesMachines(props) {
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             value={phoneNumber}
                         />
+                        <label>
+                            <span>Rodaj faktury</span>
+                            <select
+                                type="text"
+                                name="typePerson"
+                                onChange={(e) => setTypePerson(e.target.value)}
+                                value={typePerson}
+                            >
+                                <option>wybierz</option>
+                                <option>Firma</option>
+                                <option>Osoba prywatna</option>
+                            </select>
 
+                            {typePerson === "Firma" && (
+                                <input
+                                    type="text"
+                                    placeholder="Podaj Nazwe Firmy"
+                                    name="nameCompany"
+                                    onChange={(e) => setNameCompany(e.target.value)}
+                                    value={nameCompany}
+                                />
+                            )}
+                        </label>
                     </label>
 
                     <label>
@@ -245,7 +274,14 @@ export default function VivesMachines(props) {
                                         {machine.quanitity} szt.
                                     </td>
                                 </tr>
-
+                                <tr>
+                                    <td>
+                                        Cena za  24 h najmu
+                                    </td>
+                                    <td>
+                                        {machine.unitPriceService} zł 
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>
                                         Rok produkcji

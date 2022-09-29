@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const client = require('../app/controlelers/client.controleler');
-var pdf = require("pdf-creator-node");
-var fs = require("fs");
+let pdf = require("pdf-creator-node");
+let fs = require("fs");
 path = require('path'),
     nodeMailer = require('nodemailer'),
     bodyParser = require('body-parser');
@@ -79,9 +79,7 @@ router.post('/clientAll', function (req, res) {
 
 
 router.post('/send-email', function (req, res) {
-
     let contentHtml =
-
         `<html>
             <head>
                 <style>
@@ -158,47 +156,37 @@ router.post('/send-email', function (req, res) {
                         </tr>
                     </tbody>
                 </table>
-
-                <p> Załączniku zanjdują sie dalsze infoormacje</p>
             </body>
         </html>
     `
- 
-var options = {
-    format: "A3",
-    orientation: "portrait",
-    border: "10mm",
-    header: {
-        height: "45mm",
-        contents: '<div style="text-align: center;">Projekt wypożuczlnia</div>'
-    },
-    footer: {
-        height: "25mm",
-        contents: {
-            first: 'Cover page',
-            2: 'Second page', 
-            last: 'Last Page'
+
+   let options = {
+        format: "A3",
+        orientation: "portrait",
+        border: "10mm",
+        header: {
+            height: "45mm",
+            contents: '<div style="text-align: center;">Projekt wypożuczlnia</div>'
+        },
+        footer: {
+            height: "25mm",
+            contents: {
+                first: 'Cover page',
+                2: 'Second page',
+                last: 'Last Page'
+            }
         }
-    }
-};
+    };
 
-var document = {
-    html: contentHtml,
-    data: {
-        users: contentHtml,
-    },
-    path: "messageEmail/output.pdf",
-    type: "",
-};
+    let document = {
+        html: contentHtml,
+        data: {
+            users: contentHtml,
+        },
+        path: "messageEmail/output.pdf",
+        type: "",
+    };
 
-    pdf
-        .create(document, options)
-        .then((res) => {
-            console.log(res);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "1";
 
     let transporter = nodeMailer.createTransport({
@@ -222,19 +210,25 @@ var document = {
         attachments: [
             {
                 filename: 'fileName.pdf',
-                path:"messageEmail/output.pdf",
+                path: "messageEmail/output.pdf",
                 contentType: 'application/pdf'
             }]
     };
 
-    console.log(req.body);
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return console.log(error);
-        }
-        console.log('Message %s sent: %s', info.messageId, info.response);
-        res.json("wysłano");
-    });
+    pdf
+        .create(document, options)
+        .then((res) => {
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return console.log(error);
+                }
+      /*           console.log('Message %s sent: %s', info.messageId, info.response); */
+                res.json("wysłano");
+            });
+        })
+        .catch((error) => {
+            console.error(error);
+        });
 });
 
 module.exports = router;

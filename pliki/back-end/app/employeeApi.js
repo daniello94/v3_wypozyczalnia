@@ -43,7 +43,7 @@ router.post('/signup', upload.single('photo'), function (req, res) {
         password,
         role,
         lastName,
-        phoneNumber
+        phoneNumber,
     };
 
     employee.addEmployee(newEmployeeData, function (err, user) {

@@ -36,6 +36,7 @@ router.post('/addEquipment', upload.single('photo'), function (req, res) {
     const mileage = req.body.mileage;
     const category = req.body.category;
     const descripsion = req.body.descripsion;
+    const unitPriceService = req.body.unitPriceService
 
     const newEqupimentData = {
         machineName,
@@ -45,7 +46,9 @@ router.post('/addEquipment', upload.single('photo'), function (req, res) {
         model,
         mileage,
         category,
-        descripsion
+        descripsion,
+        unitPriceService
+
     };
 
     equipment.add(newEqupimentData, function (err, files) {

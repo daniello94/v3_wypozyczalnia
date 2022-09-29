@@ -27,14 +27,24 @@ const conclusion = new mongoose.Schema({
         default: "",
     },
 
+    typePerson: {
+        type: String,
+        default: ""
+    },
+
+    nameCompany: {
+        type: String,
+        default: ""
+    },
+
     startDate: {
         type: String,
-        deflaut: ""
+        default: ""
     },
 
     endDate: {
         type: String,
-        deflaut: ""
+        default: ""
     },
 
 }, {
@@ -76,7 +86,11 @@ const equipments = new mongoose.Schema({
 
     descripsion: {
         type: String,
-        deflaut: ""
+        default: ""
+    },
+    unitPriceService: {
+        type: String,
+        default: ""
     },
 
     aplication: [conclusion]

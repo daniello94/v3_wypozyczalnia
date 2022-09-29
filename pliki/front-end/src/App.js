@@ -59,7 +59,7 @@ export default function App() {
               <Link
                 className={style.myItm}
                 to="/client">
-                Strefa Klijenta
+                Strefa Klienta
               </Link>
             </li>
           )}
